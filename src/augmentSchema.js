@@ -200,13 +200,19 @@ function addRelationshipMutations(type, namesOnly = false) {
     let fromPk = primaryKey(fromType);
     let toPk = primaryKey(toType);
 
+    let fromArgName = lowFirstLetter(fromType.name + fromPk.name);
+    let toArgName = lowFirstLetter(toType.name + toPk.name);
+
+    if (fromArgName === toArgName) {
+      fromArgName += 'A';
+      toArgName += 'B';
+    }
+
     // FIXME: could add relationship properties here
     mutations += `
-    Add${fromType.name}${toType.name}(${lowFirstLetter(
-      fromType.name + fromPk.name
-    )}: ${innerType(fromPk.type).name}!, ${lowFirstLetter(
-      toType.name + toPk.name
-    )}: ${innerType(toPk.type).name}!): ${
+    Add${fromType.name}${toType.name}(${fromArgName}: ${
+      innerType(fromPk.type).name
+    }!, ${toArgName}: ${innerType(toPk.type).name}!): ${
       fromType.name
     } @MutationMeta(relationship: "${relTypeArg.value.value}", from: "${
       fromType.name
